@@ -18,7 +18,7 @@ export const searchStudents = async (keyword, page, size) => {
 }
 
 export const fetchStudentById = async (studentId) => {
-    const response = await api.get(`/students/${studentId}`);
+    const response = await api.get(`/students/student?id=${studentId}`);
     return response.data;
 }
 

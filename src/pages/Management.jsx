@@ -6,14 +6,20 @@ import {
 import Swal from "sweetalert2";
 import { FaRegEdit } from "react-icons/fa";
 import { RiDeleteBin5Line } from "react-icons/ri";
-import { IoSearch } from "react-icons/io5";
+import { IoSearch, IoPersonAdd  } from "react-icons/io5";
 import { z } from "zod";
+import StudentForm from "../components/StudentForm";
 
 const Management = () => {
   const [ student, setStudent ] = useState([]);
   const [ inputValue, setInputValue ] = useState("");
   const [controls, setControls] = useState({ page: 0, size: 10, total: 0 });
+  const [ studentId, setStudentId ] = useState("");
+  const [ openPopup, setOpenPopup ] = useState(false);
 
+  // const handleSendStudentId = (studentId) => {
+  //   setStudentId(studentId);
+  // }
 
   const controlsSchema = z.object({
     page: z.number().min(0),
@@ -40,6 +46,10 @@ const Management = () => {
   // const handleSubmit = useCallback((e) => {
   //   e.preventDefault();
   // }, []);
+
+  const handleOpenPopup = () => {
+    setOpenPopup(!openPopup);
+  }
 
   const handleChange = useCallback((e) => {
     setInputValue(e.target.value);
@@ -160,10 +170,10 @@ const Management = () => {
   };
 
   return (
-    <div className="flex flex-col px-96 gap-2 py-14">
-      <form className="flex justify-between" onSubmit={handleSubmit}>
+    <div className="flex flex-col px-96 gap-2 py-14 w-full relative items-center justify-center">
+      <form className="flex justify-between w-full" onSubmit={handleSubmit}>
         <h1 className="text-2xl font-semibold text-gray-600">Students List</h1>
-        <div className="h-[30px]">
+        <div className="h-[30px] flex">
           <input
             type="text"
             className="border h-full rounded-l-sm px-2 outline-green-500/50 text-gray-700"
@@ -171,7 +181,10 @@ const Management = () => {
             onChange={handleChange}
             placeholder="Secrch..."
           />
-          <button type="submit" className="p-2 h-full bg-green-500 hover:bg-green-600 text-white ease-in-out delay-200 duration-200 rounded-r-sm">{ <IoSearch /> }</button>
+          <div className="flex justify-between gap-4">
+            <button type="submit" className="p-2 h-full bg-green-500 hover:bg-green-600 text-white ease-in-out delay-200 duration-200 rounded-r-sm">{ <IoSearch /> }</button>
+            <button type="button" onClick={handleOpenPopup} className="p-2 h-full bg-sky-500 hover:bg-sky-600 text-white ease-in-out delay-200 duration-200 rounded-sm">{ <IoPersonAdd /> }</button>
+          </div>
         </div>
       </form>
       {/* <table className='border-collapse border border-gray-400 max-w-full'>
@@ -198,7 +211,7 @@ const Management = () => {
         </tbody>
       </table> */}
 
-      <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+      <div className="relative overflow-x-auto shadow-md sm:rounded-lg w-full">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50">
             <tr className="bg-gray-200">
@@ -214,7 +227,7 @@ const Management = () => {
                   <td className="border border-gray-400 p-2">{user.id}</td>
                   <td className="border border-gray-400 p-2">{user.name}</td>
                   <td className="border border-gray-400 p-2 text-center ">
-                    <button className="text-white p-2 bg-yellow-500 rounded-sm hover:bg-yellow-600 ease-in-out delay-200 duration-200 mx-1">
+                    <button onClick={() => {setStudentId(user.id),handleOpenPopup()}} className="text-white p-2 bg-yellow-500 rounded-sm hover:bg-yellow-600 ease-in-out delay-200 duration-200 mx-1">
                       {<FaRegEdit />}
                     </button>
                     <button
@@ -253,8 +266,8 @@ const Management = () => {
               <li key={index}>
                 <button
                   onClick={() => controllers.set('page', index)}
-                  className={`flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ${
-                    controllers.get.page === index ? 'bg-green-500/50 text-white' : ''
+                  className={`flex items-center justify-center px-3 h-8 leading-tight ${
+                    controllers.get.page === index ? 'bg-green-500/50 text-white' : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700'
                   }`}
                 >
                   {index + 1}
@@ -271,7 +284,9 @@ const Management = () => {
         </nav>
 
       </div>
-
+      <div className={`absolute ${openPopup ? "" : "hidden" }`}>
+        <StudentForm studentId={studentId} handleOpenPopup={handleOpenPopup} />
+      </div>
     </div>
   );
 };
